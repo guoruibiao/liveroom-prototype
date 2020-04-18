@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            *{
+                margin:0px;
+                padding:0px;
+            }
+        </style>
+        <link rel="stylesheet" href="//g.alicdn.com/de/prismplayer/2.2.0/skins/default/aliplayer-min.css" />
+    </head>
+    <body>
+        <div id="myplayer" cover='' x5-playsinline="" x-webkit-airplay="" playsinline="" webkit-playsinline="" ></div>
+
+        <hr>
+        <div style="margin-left:400px">
+            <h3>群聊天室</h3>
+            <div style="border:1px solid;width: 600px;height: 300px;">
+                <div id="msgArea" style="width:100%;height: 100%;text-align:start;resize: none;font-family: 微软雅黑;font-size: 20px;overflow-y: scroll"></div>
+            </div>
+            <div style="border:1px solid;width: 600px;height: 100px;">
+                <div style="width:100%;height: 100%;">
+                    <textarea id="userMsg" style="width:100%;height: 100%;text-align:start;resize: none;font-family: 微软雅黑;font-size: 20px;"></textarea>
+                </div>
+            </div>
+            <div style="border:1px solid;width: 600px;height: 25px;">
+                <button style="float: right;" onclick="sendMsg()">发送</button>
+            </div>
+        </div>
+        </body>
+    </body>
+<script type="text/javascript" src="//g.alicdn.com/de/prismplayer/2.2.0/aliplayer-min.js"></script>
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    var ws;
+    $(function(){
+        link();
+    })
+    function link () {
+        ws = new WebSocket("ws://127.0.0.1:9998/ws");//连接服务器
+        ws.onopen = function(event){
+            console.log(event);
+            alert('连接了');
+        };
+        ws.onmessage = function (event) {
+            var date = new Date();
+            var msg = "<p>"+date.toLocaleString()+"</p>"+"<p>"+event.data+"</p>";
+            $("#msgArea").append(msg);
+        }
+        ws.onclose = function(event){alert("已经与服务器断开连接\r\n当前连接状态："+this.readyState);};
+        ws.onerror = function(event){alert("WebSocket异常！");};
+    }
+    function sendMsg(){
+        var msg = $("#userMsg").val();
+        ws.send(msg);
+    }
+</script>
+
+<script>
+    var player = new Aliplayer({
+
+        id: "myplayer",
+
+        autoplay: true,
+
+        isLive:false,
+
+        playsinline:true,
+
+        width:"100%",
+
+        height:"400px",
+
+        controlBarVisibility:"always",
+
+        useH5Prism:false,
+
+        useFlashPrism:false,
+
+        source:"rtmp://localhost:1935/stream/example",
+
+        cover:""
+
+    });
+</script>
+</html>
